@@ -22,6 +22,7 @@ from crewai.utilities.constants import TRAINED_AGENTS_DATA_FILE, TRAINING_DATA_F
 from crewai.utilities.converter import generate_model_description
 from crewai.utilities.token_counter_callback import TokenCalcHandler
 from crewai.utilities.training_handler import CrewTrainingHandler
+from crewai.aiXplain_llm import AixplainLLM
 
 
 def mock_agent_ops_provider():
@@ -151,7 +152,22 @@ class Agent(BaseAgent):
         # Handle different cases for self.llm
         if isinstance(self.llm, str):
             # If it's a string, create an LLM instance
-            self.llm = LLM(model=self.llm)
+            if self.llm.startswith("aixplain:"):
+                # Extract the model ID from the string (e.g., "aixplain:<model_id>")
+                model_id = self.llm.split(":")[1]
+
+                # Initialize AixplainLLM
+                self.llm = AixplainLLM(
+                    model_id=model_id,
+                    team_api_key=os.environ.get("TEAM_API_KEY"),
+                    temperature=0.7,
+                    max_tokens=self.max_tokens,
+                )
+            else:
+                self.llm = LLM(model=self.llm)
+        elif isinstance(self.llm, AixplainLLM):
+            # If an AixplainLLM instance is already provided, use it directly
+            pass        
         elif isinstance(self.llm, LLM):
             # If it's already an LLM instance, keep it as is
             pass

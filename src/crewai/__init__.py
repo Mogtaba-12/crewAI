@@ -5,6 +5,7 @@ from crewai.crew import Crew
 from crewai.flow.flow import Flow
 from crewai.knowledge.knowledge import Knowledge
 from crewai.llm import LLM
+from crewai.aiXplain_llm import AixplainLLM
 from crewai.pipeline import Pipeline
 from crewai.process import Process
 from crewai.routers import Router
